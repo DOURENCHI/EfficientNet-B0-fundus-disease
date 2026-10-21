@@ -1,0 +1,39 @@
+# ---------- Python ----------
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ipynb_checkpoints/
+
+# ---------- 虚拟环境 ----------
+venv/
+.venv/
+env/
+
+# ---------- 数据（体积大，不入库） ----------
+data/raw/*
+!data/raw/.gitkeep
+data/splits/*
+!data/splits/.gitkeep
+
+# ---------- 训练产物 ----------
+outputs/ckpt/*
+!outputs/ckpt/.gitkeep
+outputs/logs/*
+!outputs/logs/.gitkeep
+outputs/figures/*
+!outputs/figures/.gitkeep
+
+# ---------- 模型权重 ----------
+*.pth
+*.pt
+*.ckpt
+
+# ---------- 编辑器与系统 ----------
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# ---------- 日志 ----------
+*.log

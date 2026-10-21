@@ -1,0 +1,49 @@
+# ==========================================================================
+# Project 3 眼底多标签分类 —— 全局配置
+# 数据：老师发布的 student_dataset（MuReD 20 类多标签）
+# 划分已由课程固定（train 1545 / val 221 / test 442），直接使用，不再重新划分
+# ==========================================================================
+
+seed: 42
+
+data:
+  root: D:/作业/数字医学技术/student_dataset/student_dataset
+  image_dir: D:/作业/数字医学技术/student_dataset/student_dataset/images
+  train_csv: D:/作业/数字医学技术/student_dataset/student_dataset/train.csv
+  val_csv: D:/作业/数字医学技术/student_dataset/student_dataset/val.csv
+  test_csv: D:/作业/数字医学技术/student_dataset/student_dataset/test.csv
+  sample_submission: D:/作业/数字医学技术/student_dataset/student_dataset/sample_submission.csv
+  image_size: 300          # 数据集原始分辨率，保留细节
+  num_classes: 20
+  clahe: true              # CLAHE 局部对比增强
+
+train:
+  batch_size: 16
+  epochs: 20
+  lr: 0.0001
+  backbone_lr_scale: 1.0     # 1.0 = 骨干与分类头使用同一学习率（= 基线配置）
+  weight_decay: 0.01
+  num_workers: 4             # Windows 上若报错改成 0
+  amp: true
+  amp_dtype: bf16            # bf16 动态范围大，BN 权重极端时不会溢出（fp16 会）
+  early_stop_patience: 5     # 验证宏平均 AUC 连续 N 轮不升则早停
+  pos_weight: true           # BCE 正类权重 = 负/正样本比
+  pos_weight_cap: 20.0       # 权重上限，避免极稀有类主导梯度
+
+model:
+  backbone: efficientnet_b0.ra_in1k   # ImageNet 预训练（基线配置）
+  pretrained: true
+  dropout: 0.3
+
+infer:
+  tta: true    # 水平翻转 TTA：原图与翻转图概率取平均（验证集宏平均 AUC +0.008）
+
+# 说明：曾尝试「更强预训练 ra4 + dropout 0.5 + 分层学习率 + 强增强」的改进组合，
+# 验证集宏平均 AUC 为 0.9227，低于本基线的 0.9268，故最终采用基线配置。
+# 该实验的配置保留在 configs/config_exp2_reg.yaml 备查。
+
+output:
+  ckpt_dir: outputs/ckpt
+  log_dir: outputs/logs
+  fig_dir: outputs/figures
+  pred_csv: outputs/test.csv      # 提交文件（课程要求命名为 test.csv）
